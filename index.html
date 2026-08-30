@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Картон · отбор хуков</title>
+<meta name="description" content="Система, которая отбирает хуки до съёмки: разбор ленты Karton Pay и 30 готовых заходов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --paper:#F5F5F2; --surface:#FFFFFF; --ink:#14171A; --muted:#6C7169;
+    --line:#E0E1DB; --accent:#0F6E4F; --hot:#B03A2C; --grey-bar:#C6C7C0;
+    --chip-bg:#F2F2F0; --chip-ink:#14171A;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0F1211; --surface:#171A18; --ink:#EBEDE8; --muted:#8E948B;
+      --line:#282C29; --accent:#3FBF8C; --hot:#E8776A; --grey-bar:#3A3E3B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1211; --surface:#171A18; --ink:#EBEDE8; --muted:#8E948B;
+    --line:#282C29; --accent:#3FBF8C; --hot:#E8776A; --grey-bar:#3A3E3B;
+  }
+  html{color-scheme:light dark}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Golos Text","Helvetica Neue",Arial,sans-serif;
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:64px 24px 100px;}
+  .eyebrow{
+    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  }
+  h1{
+    font-family:"Unbounded","Golos Text",sans-serif;font-weight:800;
+    font-size:clamp(32px,7vw,56px);line-height:1.02;letter-spacing:-.025em;
+    margin:16px 0 0;text-wrap:balance;
+  }
+  h1 em{font-style:normal;color:var(--accent);}
+  .lede{font-size:19px;color:var(--muted);margin:20px 0 0;max-width:56ch;}
+  h2{
+    font-family:"Unbounded","Golos Text",sans-serif;font-weight:600;
+    font-size:21px;letter-spacing:-.01em;margin:0 0 8px;text-wrap:balance;
+  }
+  p{margin:0 0 14px;max-width:64ch;}
+  strong{font-weight:600}
+  hr.rule{border:0;border-top:1px solid var(--line);margin:52px 0;}
+
+  /* контраст двух роликов */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:28px 0 6px;}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px;
+  }
+  .card .chip{
+    display:inline-block;background:var(--chip-bg);color:var(--chip-ink);
+    border-radius:7px;padding:5px 10px;font-weight:600;font-size:14px;line-height:1.35;
+    align-self:flex-start;box-shadow:0 1px 0 rgba(0,0,0,.06);
+  }
+  .num{
+    font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:600;
+    font-size:34px;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1;
+  }
+  .num.win{color:var(--accent)} .num.dead{color:var(--hot)}
+  .card small{color:var(--muted);font-size:13px;line-height:1.45;}
+
+  .steps{display:flex;flex-direction:column;margin-top:14px;}
+  .step{display:grid;grid-template-columns:40px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line);}
+  .step:last-child{border-bottom:1px solid var(--line);}
+  .step-n{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;font-weight:600;color:var(--accent);padding-top:4px;}
+  .step p{margin:0;}
+  .step b{font-weight:600;display:block;margin-bottom:2px;}
+
+  .cta{
+    display:inline-flex;align-items:center;gap:10px;margin-top:8px;
+    background:var(--accent);color:var(--paper);text-decoration:none;
+    font-weight:600;font-size:16px;padding:14px 22px;border-radius:10px;
+    transition:transform .15s ease, opacity .15s ease;
+  }
+  .cta:hover{transform:translateY(-1px);opacity:.92}
+  .cta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  @media (prefers-reduced-motion: reduce){.cta{transition:none}.cta:hover{transform:none}}
+  .cta-note{font-size:14px;color:var(--muted);margin-top:12px;}
+
+  footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;font-family:"JetBrains Mono",ui-monospace,monospace;display:flex;flex-wrap:wrap;gap:6px 20px;}
+  @media (max-width:560px){.wrap{padding:40px 18px 72px}.split{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Karton Pay · рабочие материалы</div>
+  <h1>Формат работает.<br><em>Отбор — нет.</em></h1>
+  <p class="lede">Ролики Картона снимаются по одной механике, а результат гуляет в тысячу раз. Проблема не в съёмке — в том, что сценарий проверяется уже после публикации.</p>
+
+  <div class="split">
+    <div class="card">
+      <span class="chip">Хотела оплатить Сбером в Тае 😄</span>
+      <div class="num win">231 000</div>
+      <small>Чужой человек, неловкая ситуация, конфликт до развязки.</small>
+    </div>
+    <div class="card">
+      <span class="chip">Моя еда — вода! Заплатил Картоном в Тае</span>
+      <div class="num dead">249</div>
+      <small>В кадре продукт, а не человек. Тот же день, та же страна, та же карта.</small>
+    </div>
+  </div>
+  <p style="margin-top:18px;color:var(--muted);font-size:15px">Разница — 928 раз. Оба ролика уже стоили съёмочного дня.</p>
+
+  <hr class="rule">
+
+  <h2>Что делает система</h2>
+  <p>Ставит проверку перед съёмкой, а не после. Ты платишь временем только за те сценарии, которые уже показали удержание.</p>
+  <div class="steps">
+    <div class="step"><span class="step-n">01</span><p><b>Разбор</b>Лента, воронка, конкуренты и то, на чём ролики реально умирают.</p></div>
+    <div class="step"><span class="step-n">02</span><p><b>Хуки</b>30 заходов под продукт: плашка в кадр и первые три секунды. Готовы к съёмке как есть.</p></div>
+    <div class="step"><span class="step-n">03</span><p><b>Тест</b>Снимаются только первые три секунды каждого. Час работы на восемь заготовок.</p></div>
+    <div class="step"><span class="step-n">04</span><p><b>Съёмка</b>Полноценно снимаются два-три хука, пережившие тест. Остальные закрываются.</p></div>
+  </div>
+
+  <hr class="rule">
+
+  <h2>Первая партия</h2>
+  <p>30 хуков под Картон, разложенных по шести направлениям — от сервисов, которые не оплатить из дома, до роликов, снимающих недоверие к новому банку.</p>
+  <a class="cta" href="huk/">Открыть 30 хуков →</a>
+  <p class="cta-note">Разбор построен на публичных данных ленты @nikitakonev и странице бота @Kartonpay_bot.</p>
+
+  <footer>
+    <span>mironmotor/karton</span>
+    <span>август 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>
